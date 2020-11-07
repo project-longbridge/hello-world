@@ -8,17 +8,10 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-// Interface implements the generic interface, this should change in the future
-type Interface interface{}
-
-func response(body Interface, statusCode int) events.APIGatewayProxyResponse {
-	bodyStr, err := json.Marshal(body)
-	if err != nil {
-		panic(err)
-	}
+func response(body string, statusCode int) events.APIGatewayProxyResponse {
 	return events.APIGatewayProxyResponse{
 		StatusCode: statusCode,
-		Body:       string(bodyStr),
+		Body:       body,
 		Headers: map[string]string{
 			"Access-Control-Allow-Origin": "*",
 		},
@@ -26,7 +19,11 @@ func response(body Interface, statusCode int) events.APIGatewayProxyResponse {
 }
 
 func helloHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	return response(map[string]string{"message": "Hello, World!"}, http.StatusOK), nil
+	body, err := json.Marshal(map[string]string{"message": "Hello, World!"})
+	if err != nil {
+		return response("", http.StatusInternalServerError), err
+	}
+	return response(string(body), http.StatusOK), nil
 }
 
 func main() {
