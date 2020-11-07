@@ -6,12 +6,12 @@ Initial trial lambda function in GoLang for handling Hello World requests
 
 ## Build 
 ```bash
-docker run --rm -v "$PWD":/go/src/handler:Z lambci/lambda:build-go1.x sh -c 'go build main.go'
+docker run --rm -v "$PWD":/go/src/handler:Z lambci/lambda:build-go1.x sh -c 'go build -o bin/main main.go'
 ```
 
 ## Run locally
 ```bash
-docker run --rm -v "$PWD":/var/task:Z lambci/lambda:go1.x main
+docker run --rm -v "$PWD/bin":/var/task:Z lambci/lambda:go1.x main
 ```
 
 ## Developing code
@@ -19,7 +19,7 @@ docker run --rm -v "$PWD":/var/task:Z lambci/lambda:go1.x main
 ```bash
 docker run --restart on-failure --rm \
   -e DOCKER_LAMBDA_WATCH=1 -e DOCKER_LAMBDA_STAY_OPEN=1 -p 9001:9001 \
-  -v "$PWD":/var/task:Z \
+  -v "$PWD/bin":/var/task:Z \
   lambci/lambda:go1.x main
 ```
 

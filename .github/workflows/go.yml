@@ -34,3 +34,8 @@ jobs:
 
     - name: Test
       run: go test -v .
+
+    - name: Archive Build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: bin
