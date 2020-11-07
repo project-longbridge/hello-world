@@ -37,8 +37,11 @@ jobs:
     - name: Test
       run: go test -v .
 
+    - name: ZIP Build Folder
+      run: zip build.zip -j ./bin/*
+
     - name: Archive Build Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: bin
+        name: build
         path: bin
