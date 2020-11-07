@@ -1,16 +1,24 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func response(body string, statusCode int) events.APIGatewayProxyResponse {
+// Interface implements the generic interface, this should change in the future
+type Interface interface{}
+
+func response(body Interface, statusCode int) events.APIGatewayProxyResponse {
+	bodyStr, err := json.Marshal(body)
+	if err != nil {
+		panic(err)
+	}
 	return events.APIGatewayProxyResponse{
 		StatusCode: statusCode,
-		Body:       string(body),
+		Body:       string(bodyStr),
 		Headers: map[string]string{
 			"Access-Control-Allow-Origin": "*",
 		},
@@ -18,7 +26,7 @@ func response(body string, statusCode int) events.APIGatewayProxyResponse {
 }
 
 func helloHandler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	return response("Hello World", http.StatusOK), nil
+	return response(map[string]string{"message": "Hello, World!"}, http.StatusOK), nil
 }
 
 func main() {
